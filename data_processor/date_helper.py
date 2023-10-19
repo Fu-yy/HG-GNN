@@ -10,7 +10,12 @@ import operator
 import numpy as np
 import pandas as pd
 from pandas import Timedelta
-from tqdm import tqdm 
+from tqdm import tqdm
+
+# 使用配置文件类导入配置
+# from utils.config import Configurator
+import configparser
+
 
 class BasicGraph:
     def __init__(self, min_cnt=1):
@@ -23,7 +28,7 @@ class BasicGraph:
         e = (a, b)
         self.edge_cnt.setdefault(e, 0)
         self.edge_cnt[e] += 1
-        # first appear 
+        # first appear
         if self.edge_cnt[e] == self.min_cnt:
             self.adj.setdefault(a, [])
             self.adj[a].append(b)
@@ -43,12 +48,14 @@ class BasicGraph:
     def nb_edges(self):
         return self._nb_edges
 
+
+# yoochoose数据集加载
 class Data_Process(object):
     def __init__(self,config):
 
         self.dataset=config['dataset.name']
         self.data_path=config['dataset.path']
-        
+
         self.conf=config
         self.vid_map={}
         self.filter_vid={}
@@ -57,6 +64,8 @@ class Data_Process(object):
         category_dict={}
 
         df=pd.read_csv(f'{data_home}/yoochoose-clicks.dat',header=None,names=["sid", "Timestamp", "vid", "Category"],usecols=["vid", "Category"])
+        print(df)
+        print("aaaaaaaaadf")
         new_cate=df.drop_duplicates(['vid','Category'])
         new_cate=new_cate[new_cate['Category'].isin([str(_) for _ in range(1,13)])]#['Category']#.value_counts()
         vid=new_cate['vid'].tolist()
@@ -81,7 +90,7 @@ class Data_Process(object):
                 ts = int(time.mktime(time.strptime(ts[:19], '%Y-%m-%dT%H:%M:%S')))
                 sid2vid_list.setdefault(sid, [])
                 sid2vid_list[sid].append([vid, 0, ts])
-       
+
         # session_id,timestamp,item_id,category
         # 1,2014-04-07T10:51:09.277Z,214536502,0
         cnt = 0
@@ -96,14 +105,14 @@ class Data_Process(object):
 
                 sid2vid_list.setdefault(sid, [])
                 sid2vid_list[sid].append([vid, 1, ts])
-        
+
         for sid in sid2vid_list:
             sid2vid_list[sid] = sorted(sid2vid_list[sid], key=lambda x: x[-1])
 
         n = len(sid2vid_list)
         # sort all sessions by the last time of the session
         yc = sorted(sid2vid_list.items(), key=lambda x: x[1][-1][-1])
-        
+
         n_part = n // frac
         print('sid2vid len:',n)
         print('n_part:',n_part)
@@ -149,7 +158,7 @@ class Data_Process(object):
                 if len(vid_list_str.split(','))<=cold_session:
                     continue
                 for vid in vid_list_str.split(','):
-                    
+
                     vid, cls, ts = vid.split(':')
                     #cls = int(cls)  # cls: 0, 1, 2, ...
                     if cls=='1':
@@ -164,9 +173,9 @@ class Data_Process(object):
                 if len(vid_list['1'])<=cold_session:
                     continue
                 data_list.append([vid,vid_list,max_ts])
-                
+
                     #vid_list.append([vid, cls, ts]) # item_id , behavior_type , timestamp
-        # sort by vid appears 
+        # sort by vid appears
         sorted_counts = sorted(vid_count.items(), key=operator.itemgetter(1))
 
         filtered_data_list=[]
@@ -177,7 +186,7 @@ class Data_Process(object):
                 continue
             filtered_data_list.append(s)
         return filtered_data_list
-        
+
 
     def _re_vindex(self,data_list,filter_flag):
         """
@@ -200,7 +209,7 @@ class Data_Process(object):
                         self.filter_vid.setdefault(vid,0)
                         self.filter_vid[vid]+=1
                         continue
-                                        
+
                 if vid not in self.vid_map:
                     outseq.append(new_id)
                     self.vid_map[vid]=new_id
@@ -208,10 +217,10 @@ class Data_Process(object):
                 else:
                     outseq.append(self.vid_map[vid])
             new_data_list.append(outseq)
-        
+
         #print(new_data_list[:10])
         return new_data_list
-        
+
 
     def _split_data(self):
         """
@@ -247,14 +256,14 @@ class Data_Process(object):
             #         category_dict[self.vid_map[key]]=raw_categ_dict[str(key)]
             #     except:
             #         print(key)
-                
-            
+
+
             print("session nums: train/val/test: ",len(train_sess),len(val_sess),len(tes_sess))
-            
+
             print(train_sess[-3:],test_sess[-3:])
 
             print('item num:',len(self.vid_map))
-        
+
             print('filtered item num:',len(self.filter_vid))
 
             train_sess={0:train_sess}
@@ -264,7 +273,7 @@ class Data_Process(object):
             # [vid_list_0,vid_list_1] (different behaviors,dict format)
             with open(os.path.join(self.data_path,self.dataset)+'/train.pkl','wb') as f:
                 pickle.dump(train_sess,f)
-            
+
             with open(os.path.join(self.data_path,self.dataset)+'/val.pkl','wb') as f:
                 pickle.dump(val_sess,f)
 
@@ -289,19 +298,19 @@ class Data_Process(object):
             if len(adj_list) > adj_size:
                 adj_list = rdm.choice(adj_list, size=adj_size, replace=False).tolist()
             mask = [0] * (adj_size - len(adj_list))
-            adj_list = adj_list[:] + mask # set the masks for padding 
+            adj_list = adj_list[:] + mask # set the masks for padding
             adj.append(adj_list)
-            w_list = [G.edge_cnt.get((node, x), 0) for x in adj_list] # get the edge weight for each adj node of the target node. 
+            w_list = [G.edge_cnt.get((node, x), 0) for x in adj_list] # get the edge weight for each adj node of the target node.
             w.append(w_list)
         return [adj,w]
-        
+
 
     # def _build_graph(self):
     #     """"
     #     follow the specific strategy to build the graph of the sessions.
 
     #     return adj data.
-     
+
     #     """
     #     with open(os.path.join(self.data_path,self.dataset)+'/train.pkl','rb') as f:
     #         train_data_list=pickle.load(f)
@@ -318,19 +327,21 @@ class Data_Process(object):
     #             if now_node!=pre_node:
     #                 G_out.add_edge(pre_node,now_node)# out degree
     #                 G_in.add_edge(now_node,pre_node) # in degree
-        
+
     #     adj0=self._get_sample_adj(G_in)
     #     adj1=self._get_sample_adj(G_in)
     #     with open(os.path.join(self.data_path,self.dataset)+'/adj.pkl','wb') as f:
     #         pickle.dump([adj0,adj1],f)
 
 
+# 加载lastfm数据集的类
+
 class LastFM_Process(Data_Process):
     def __init__(self,config):
         super(LastFM_Process, self).__init__(config)
         self.interval = Timedelta(hours=8)
         self.full_df=None
-    
+
     def _update_id(self,df, field):
         labels = pd.factorize(df[field])[0]
         kwargs = {field: labels}
@@ -346,7 +357,7 @@ class LastFM_Process(Data_Process):
             df.timestamp - df_prev.timestamp > self.interval
         )
         session_id = is_new_session.cumsum() - 1
-      
+
         df = df.assign(sessionId=session_id)
         return df
 
@@ -368,7 +379,7 @@ class LastFM_Process(Data_Process):
         top_items = item_support.nlargest(n).index
         df_top = df[df.itemId.isin(top_items)]
         return df_top
-    
+
     def filter_short_sessions(self,df, min_len=2):
         session_len = df.groupby('sessionId', sort=False).size()
         long_sessions = session_len[session_len >= min_len].index
@@ -381,7 +392,7 @@ class LastFM_Process(Data_Process):
         freq_items = item_support[item_support >= min_support].index
         df_freq = df[df.itemId.isin(freq_items)]
         return df_freq
-    
+
     def filter_until_all_long_and_freq(self,df, min_len=2, min_support=5):
         while True:
             df_long = self.filter_short_sessions(df, min_len)
@@ -390,7 +401,7 @@ class LastFM_Process(Data_Process):
                 break
             df = df_freq
         return df
-    
+
     def _agg_df(self,df):
         """
         {u:[[s1],[s2],[s3],....]}
@@ -400,7 +411,7 @@ class LastFM_Process(Data_Process):
             res.setdefault(u,[])
             res[u]=ug.groupby('sessionId')['itemId'].agg(list).tolist()
         return res
-                 
+
     def _agg_all_seq(self,df):
         """
         {u:[[s1],[s2],[s3],....]}
@@ -450,20 +461,20 @@ class LastFM_Process(Data_Process):
         print(df_train['itemId'].max(),df_train['itemId'].min())
         print(df_test['itemId'].max(),df_test['itemId'].min())
 
-        # split 
+        # split
         df_test=df_test.reset_index(drop=True)
         df_val= df_test.sample(frac=val_ratio)
         part_test=df_test[~df_test.index.isin(df_val.index)]
-        
+
         with open(os.path.join(self.data_path,self.dataset)+'/train.pkl','wb') as f:
             pickle.dump(self._agg_df(df_train),f)
-        
+
         with open(os.path.join(self.data_path,self.dataset)+'/val.pkl','wb') as f:
             pickle.dump(self._agg_df(df_val),f)
 
         with open(os.path.join(self.data_path,self.dataset)+'/test.pkl','wb') as f:
             pickle.dump(self._agg_df(part_test),f)
-        
+
         with open(os.path.join(self.data_path,self.dataset)+'/all_test.pkl','wb') as f:
             pickle.dump(self._agg_df(df_test),f)
 
@@ -499,7 +510,7 @@ class LastFM_Process(Data_Process):
         # save_dataset(dataset_dir, df_train, df_test)
 
     def _get_user_profile(self):
-        
+
         data_home='./raw_data/lastfm-1K'
         saved_path='./dataset'
         csv_file=data_home+'/userid-timestamp-artid-artname-traid-traname.tsv'
@@ -527,9 +538,17 @@ class LastFM_Process(Data_Process):
         uids=df['userId'].unique().tolist()
         user_df[user_df['#id'].isin(uids)].to_csv(saved_path+'/lastfm/user_profile.csv',index=False)
         print('save to user_profile.csv')
-        
-# if __name__=='__main__':
-#     conf={}
-#     lp=LastFM_Process(conf)
-#     lp._read_raw_data()
-#     lp._split_data()
+
+if __name__=='__main__':
+    conf={
+        'config': 'basic.ini'
+    }
+
+    config = configparser.ConfigParser()
+    config.read("../basic.ini")
+    config = config['default']
+    # print(config.get("default", "dataset.name"))
+    print(config['dataset.name'])
+    lp=LastFM_Process(config)
+    lp._read_raw_data()
+    lp._split_data()
