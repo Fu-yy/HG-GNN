@@ -6,17 +6,10 @@ following the torch.Dataset, we prepare the standard dataset input for Models
 """
 import os
 import pickle
-import dgl
-import json
-from multiprocessing import Pool
-from multiprocessing import cpu_count 
+
 import numpy as np
-import torch
 from torch.utils.data import Dataset
 from tqdm import tqdm
-
-
-from utils import log_exec_time
 
 
 def gen_seq(data_list):
@@ -64,7 +57,8 @@ def common_seq(data_list):
 
 def load_data(dataset,data_path):
     
-    if not os.path.exists(os.path.join(data_path,dataset)+'/train_seq.pkl'): 
+    # if not os.path.exists(os.path.join(data_path,dataset)+'/train_seq.pkl'):
+    if not os.path.exists('E:/MyCode/PycharmCode/HG-GNN/data_processor/dataset/lastfm/train_seq.pkl'):
             # create the tmp filepath to save data
         print('try to build ',os.path.join(data_path,dataset)+'/train_seq.pkl')
         with open(os.path.join(data_path,dataset)+'/train.pkl','rb') as f:
@@ -80,10 +74,12 @@ def load_data(dataset,data_path):
         
 
         try:
-            with open(os.path.join(data_path,dataset)+'/all_test.pkl','rb') as f:
+            # with open(os.path.join(data_path,dataset)+'/all_test.pkl','rb') as f:
+            with open('E:/MyCode/PycharmCode/HG-GNN/data_processor/dataset/lastfm/all_test.pkl','rb') as f:
                 test_data=pickle.load(f)
         except:
-            with open(os.path.join(data_path,dataset)+'/test.pkl','rb') as f:
+            # with open(os.path.join(data_path,dataset)+'/test.pkl','rb') as f:
+            with open('E:/MyCode/PycharmCode/HG-GNN/data_processor/dataset/lastfm/test.pkl','rb') as f:
                 test_data=pickle.load(f)
         train_data=common_seq(train_data)
         #train_data=common_seq(train_data)
@@ -92,15 +88,18 @@ def load_data(dataset,data_path):
         test_data=common_seq(test_data)
         
 
-        with open(os.path.join(data_path,dataset)+'/test_seq.pkl','wb') as f:
+        # with open(os.path.join(data_path,dataset)+'/test_seq.pkl','wb') as f:
+        with open('E:/MyCode/PycharmCode/HG-GNN/data_processor/dataset/lastfm/test_seq.pkl','wb') as f:
             pickle.dump(test_data,f)
 
-        with open(os.path.join(data_path,dataset)+'/train_seq.pkl','wb') as f:
+        # with open(os.path.join(data_path,dataset)+'/train_seq.pkl','wb') as f:
+        with open('E:/MyCode/PycharmCode/HG-GNN/data_processor/dataset/lastfm/train_seq.pkl','wb') as f:
             pickle.dump(train_data,f)
         return train_data,test_data,max_vid,max_uid
 
     
-    with open(os.path.join(data_path,dataset)+'/train_seq.pkl','rb') as f:
+    # with open(os.path.join(data_path,dataset)+'/train_seq.pkl','rb') as f:
+    with open('E:/MyCode/PycharmCode/HG-GNN/data_processor/dataset/lastfm/train_seq.pkl','rb') as f:
         train_data=pickle.load(f)
     max_vid=0
     max_uid=0
@@ -114,7 +113,8 @@ def load_data(dataset,data_path):
             max_vid=max(data[2])
         
 
-    with open(os.path.join(data_path,dataset)+'/test_seq.pkl','rb') as f:
+    # with open(os.path.join(data_path,dataset)+'/test_seq.pkl','rb') as f:
+    with open('E:/MyCode/PycharmCode/HG-GNN/data_processor/dataset/lastfm/test_seq.pkl','rb') as f:
         test_data=pickle.load(f)
     for data in test_data:
         if data[0]>max_uid:
@@ -251,3 +251,30 @@ class SessionGraphDataset(Dataset):
                np.array(local_nodes,dtype=np.int),\
                np.array(local_ids,dtype=np.int),\
                adj#,g
+
+
+
+
+
+import configparser
+
+def main():
+    # Step 1: Load configuration from base.ini
+    config = configparser.ConfigParser()
+    config.read('../basic.ini')  # Make sure 'base.ini' is in the same directory
+    config = config['default']
+
+    # Step 2: Load train and test data
+    data_path = "./dataset/"
+    dataset = "lastfm"
+    train_data, test_data, max_vid, max_uid = load_data(dataset, data_path)
+
+    # Step 3: Create dataset objects
+    train_dataset = SessionDataset(train_data, config, max_len=None)
+    test_dataset = SessionDataset(test_data, config, max_len=None)
+
+    # Step 4: Perform model training, evaluation, or inference
+    # You can call your model training code here using train_dataset and test_dataset.
+
+if __name__ == "__main__":
+    main()

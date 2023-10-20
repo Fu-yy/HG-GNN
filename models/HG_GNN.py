@@ -138,6 +138,9 @@ class HG_GNN(nn.Module):
 
         # HG-GNN
 
+        # modify the data type of a parameter to be long type  --by Fuyy
+        pos_idx = pos_idx.long()
+
         h1 = self.conv1(self.G,
                         self.emb_dropout(self.v2e(torch.arange(0, self.G.number_of_nodes()).long().to(device))))
 
@@ -148,6 +151,9 @@ class HG_GNN(nn.Module):
         L = seq.size()[1]
 
         node_list = seq
+
+        node_list = node_list.long()
+        user = user.long()
 
         item_embeds = ( h1[node_list] + self.v2e(node_list)) / 2
 

@@ -14,7 +14,8 @@ from tqdm import tqdm
 import dgl
 
 def userTopItems(dataset,K=10):
-    with open(f'./dataset/{dataset}/train.pkl','rb') as f:
+    with open(f'E:/MyCode/PycharmCode/HG-GNN/data_processor/dataset/{dataset}/train.pkl','rb') as f:
+    # with open(f'./dataset/{dataset}/train.pkl','rb') as f:
         session_data=pickle.load(f)
     u_dict=dict()
     item_pop=dict()
@@ -37,12 +38,14 @@ def userTopItems(dataset,K=10):
         hot_items=[key for key,value in sorted(u_dict[user].items(), key=itemgetter(1), reverse=True)[0:K]]
         cold_items=[key for key,value in sorted(u_dict[user].items(), key=itemgetter(1), reverse=False)[0:K]]
         user_topK[user]=list(set(hot_items).union(set(cold_items)))
-    with open(f'./dataset/{dataset}/userTopItems.pkl','wb') as f:
+    with open(f'E:/MyCode/PycharmCode/HG-GNN/data_processor/dataset/{dataset}/userTopItems.pkl','wb') as f:
+    # with open(f'./dataset/{dataset}/userTopItems.pkl','wb') as f:
             pickle.dump(user_topK,f)
 
 
 def itemTopUsers(dataset,K=10):
-    with open(f'./dataset/{dataset}/train.pkl','rb') as f:
+    with open(f'E:/MyCode/PycharmCode/HG-GNN/data_processor/dataset/{dataset}/train.pkl','rb') as f:
+    # with open(f'./dataset/{dataset}/train.pkl','rb') as f:
         session_data=pickle.load(f)
     v_dict=dict()
     user_active=dict()
@@ -64,7 +67,8 @@ def itemTopUsers(dataset,K=10):
         hot_users=[key for key,value in sorted(v_dict[item].items(), key=itemgetter(1), reverse=True)[0:K]]
         cold_users=[key for key,value in sorted(v_dict[item].items(), key=itemgetter(1), reverse=False)[0:K]]
         item_topK[item]=list(set(hot_users).union(set(cold_users)))
-    with open(f'./dataset/{dataset}/itemTopUtems.pkl','wb') as f:
+    with open(f'E:/MyCode/PycharmCode/HG-GNN/data_processor/dataset/{dataset}/itemTopUtems.pkl','wb') as f:
+    # with open(f'./dataset/{dataset}/itemTopUtems.pkl','wb') as f:
             pickle.dump(item_topK,f)
 
 
@@ -75,7 +79,8 @@ def userCF(dataset):
     vid_user = {}
     user_sim_matrix = {}
     uid_vcount = {}
-    with open(f'./dataset/{dataset}/train.pkl', 'rb') as f:
+    with open(f'E:/MyCode/PycharmCode/HG-GNN/data_processor/dataset/{dataset}/train.pkl', 'rb') as f:
+    # with open(f'./dataset/{dataset}/train.pkl', 'rb') as f:
         session_data = pickle.load(f)
     for uid in tqdm(session_data):
         u_sess = session_data[uid]
@@ -105,7 +110,8 @@ def userCF(dataset):
     # print(user_sim_matrix)
     for user in user_sim_matrix:
         user_topK[user] = sorted(user_sim_matrix[user].items(), key=itemgetter(1), reverse=True)[0:100]
-    with open(f'./dataset/{dataset}/u2u_sim.pkl', 'wb') as f:
+    with open(f'E:/MyCode/PycharmCode/HG-GNN/data_processor/dataset/{dataset}/u2u_sim.pkl', 'wb') as f:
+    # with open(f'./dataset/{dataset}/u2u_sim.pkl', 'wb') as f:
         pickle.dump(user_topK, f)
 
 
@@ -116,7 +122,8 @@ def itemCF(dataset):
     uid_item = {}
     item_sim_matrix = {}
     vid_ucount = {}
-    with open(f'./dataset/{dataset}/train.pkl', 'rb') as f:
+    with open(f'E:/MyCode/PycharmCode/HG-GNN/data_processor/dataset/{dataset}/train.pkl', 'rb') as f:
+    # with open(f'./dataset/{dataset}/train.pkl', 'rb') as f:
         session_data = pickle.load(f)
     for uid in tqdm(session_data):
         u_sess = session_data[uid]
@@ -143,7 +150,8 @@ def itemCF(dataset):
     # print(user_sim_matrix)
     for item in item_sim_matrix:
         item_topK[item] = sorted(item_sim_matrix[item].items(), key=itemgetter(1), reverse=True)[0:200]
-    with open(f'./dataset/{dataset}/i2i_sim.pkl', 'wb') as f:
+    with open(f'E:/MyCode/PycharmCode/HG-GNN/data_processor/dataset/{dataset}/i2i_sim.pkl', 'wb') as f:
+    # with open(f'./dataset/{dataset}/i2i_sim.pkl', 'wb') as f:
         pickle.dump(item_topK, f)
 
 
@@ -163,10 +171,12 @@ def uui_graph(dataset_name, sample_size, topK, add_u = True, add_v = True):
     itemCF(dataset_name)
     userCF(dataset_name)    
 
-    with open(f'./dataset/{dataset_name}/train.pkl', 'rb') as f:
+    with open(f'E:/MyCode/PycharmCode/HG-GNN/data_processor/dataset/{dataset_name}/train.pkl', 'rb') as f:
+    # with open(f'./dataset/{dataset_name}/train.pkl', 'rb') as f:
         graph = pickle.load(f)
 
-    with open(f'./dataset/{dataset_name}/adj_{sample_size}.pkl', 'rb') as f:
+    # with open(f'./dataset/{dataset_name}/adj_{sample_size}.pkl', 'rb') as f:
+    with open(f'E:/MyCode/PycharmCode/HG-GNN/data_processor/dataset/{dataset_name}/adj_{sample_size}.pkl', 'rb') as f:
         adj = pickle.load(f)
     adj_in = adj[0]
     adj_out = adj[1]
@@ -204,10 +214,12 @@ def uui_graph(dataset_name, sample_size, topK, add_u = True, add_v = True):
             dst_u += [u for _ in s]
             src_v += s
 
-    with open(f'./dataset/{dataset_name}/u2u_sim.pkl', 'rb') as f:
+    # with open(f'./dataset/{dataset_name}/u2u_sim.pkl', 'rb') as f:
+    with open(f'E:/MyCode/PycharmCode/HG-GNN/data_processor/dataset/{dataset_name}/u2u_sim.pkl', 'rb') as f:
         u2u_sim = pickle.load(f)
 
-    with open(f'./dataset/{dataset_name}/i2i_sim.pkl','rb') as f:
+    # with open(f'./dataset/{dataset_name}/i2i_sim.pkl','rb') as f:
+    with open(f'E:/MyCode/PycharmCode/HG-GNN/data_processor/dataset/{dataset_name}/i2i_sim.pkl','rb') as f:
         i2i_sim=pickle.load(f)
 
     topv_src=[]
@@ -282,7 +294,8 @@ def sample_relations(dataset_name, num, sample_size=20):
     relation_out = []
     relation_in = []
 
-    with open(f'./dataset/{dataset_name}/train.pkl', 'rb') as f:
+    # with open(f'./dataset/{dataset_name}/train.pkl', 'rb') as f:
+    with open(f'E:/MyCode/PycharmCode/HG-GNN/data_processor/dataset/{dataset_name}/train.pkl', 'rb') as f:
         graph = pickle.load(f)
 
     for u in tqdm(graph, desc='build the graph...', leave=False):
@@ -319,6 +332,7 @@ def sample_relations(dataset_name, num, sample_size=20):
     for i in range(1, num):
         adj_out[i] = adj_out[i][:sample_size]
 
-    with open(f'./dataset/{dataset_name}/adj_{sample_size}.pkl', 'wb') as f:
+    # with open(f'./dataset/{dataset_name}/adj_{sample_size}.pkl', 'wb') as f:
+    with open(f'E:/MyCode/PycharmCode/HG-GNN/data_processor/dataset/{dataset_name}/adj_{sample_size}.pkl', 'wb') as f:
         pickle.dump([adj_in, adj_out], f)
 

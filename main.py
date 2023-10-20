@@ -11,7 +11,7 @@ import pandas as pd
 # from pandarallel import pandarallel
 import pickle
 from tqdm import tqdm
-import dgl
+from dgl import random, seed
 from utils.config import Configurator
 
 from utils.tools import get_time_dif, Logger
@@ -97,7 +97,10 @@ def train(config, model, device, train_iter, test_iter=None):
                             pos_idx.to(device)
                             )
             model.zero_grad()
-            loss = L(outputs, (label - 1).to(device).squeeze())
+            # loss = L(outputs, (label - 1).to(device).squeeze())
+
+            # change the type of loss to long type  --by Fuyy
+            loss = L(outputs, (label - 1).to(device).squeeze().long())
             loss_list.append(loss.item())
             loss_records.append(loss.item())
             loss.backward()
@@ -206,8 +209,8 @@ def evaluate_topk(config, model, data_iter, K=20):
 
 
 if __name__=="__main__":
-    dgl.seed(430)
-    dgl.random.seed(430)
+    seed(430)
+    random.seed(430)
     torch.manual_seed(430)
     torch.cuda.manual_seed_all(430)
     torch.backends.cudnn.deterministic = True

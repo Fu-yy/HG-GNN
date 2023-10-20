@@ -63,7 +63,8 @@ class Data_Process(object):
     def _yoochoose_item_attr(self,data_home='./raw_data/yoochoose',saved_path='./dataset'):
         category_dict={}
 
-        df=pd.read_csv(f'{data_home}/yoochoose-clicks.dat',header=None,names=["sid", "Timestamp", "vid", "Category"],usecols=["vid", "Category"])
+        # df=pd.read_csv(f'{data_home}/yoochoose-clicks.dat',header=None,names=["sid", "Timestamp", "vid", "Category"],usecols=["vid", "Category"])
+        df=pd.read_csv(f'E:/MyCode/PycharmCode/HG-GNN/data_processor/raw_data/yoochoose/yoochoose-clicks.dat',header=None,names=["sid", "Timestamp", "vid", "Category"],usecols=["vid", "Category"])
         print(df)
         print("aaaaaaaaadf")
         new_cate=df.drop_duplicates(['vid','Category'])
@@ -80,7 +81,8 @@ class Data_Process(object):
         handle with the raw data format of yoochoose.
         """
         sid2vid_list = {}
-        with open(f'{data_home}/yoochoose-buys.dat', 'r') as f:
+        # with open(f'{data_home}/yoochoose-buys.dat', 'r') as f:
+        with open(f'E:/MyCode/PycharmCode/HG-GNN/data_processor/raw_data/yoochoose/yoochoose-buys.dat', 'r') as f:
             for line in tqdm(f,desc='read buy',leave=True):
                 #pbar.update(1)
                 #cnt += 1
@@ -94,7 +96,8 @@ class Data_Process(object):
         # session_id,timestamp,item_id,category
         # 1,2014-04-07T10:51:09.277Z,214536502,0
         cnt = 0
-        with open(f'{data_home}/yoochoose-clicks.dat', 'r') as f:
+        # with open(f'{data_home}/yoochoose-clicks.dat', 'r') as f:
+        with open(f'E:/MyCode/PycharmCode/HG-GNN/data_processor/raw_data/yoochoose/yoochoose-clicks.dat', 'r') as f:
             for line in tqdm(f,desc='read clicks',leave=True):
                 #pbar.update(1)
                 cnt += 1
@@ -148,7 +151,8 @@ class Data_Process(object):
         vid_count={}
         data_list=[]
 
-        with open(os.path.join(self.data_path,dataset_name)+'/data.txt','r') as f:
+        with open('E:/MyCode/PycharmCode/HG-GNN/data_processor/dataset/lastfm/data.txt','r') as f:
+        # with open(os.path.join(self.data_path,dataset_name)+'/data.txt','r') as f:
             for line in tqdm(f,desc='loading data.txt',leave=True):
                 line = line[:-1]
                 sid, vid_list_str = line.split()
@@ -271,13 +275,17 @@ class Data_Process(object):
             test_sess={0:test_sess}
             # store the dataset with pickle
             # [vid_list_0,vid_list_1] (different behaviors,dict format)
-            with open(os.path.join(self.data_path,self.dataset)+'/train.pkl','wb') as f:
+            path = os.path.join(self.data_path,self.dataset)
+            print(path)
+
+
+            with open('E:/MyCode/PycharmCode/HG-GNN/data_processor/dataset/lastfm/train.pkl','wb') as f:
                 pickle.dump(train_sess,f)
 
-            with open(os.path.join(self.data_path,self.dataset)+'/val.pkl','wb') as f:
+            with open('E:/MyCode/PycharmCode/HG-GNN/data_processor/dataset/lastfm/val.pkl','wb') as f:
                 pickle.dump(val_sess,f)
 
-            with open(os.path.join(self.data_path,self.dataset)+'/test.pkl','wb') as f:
+            with open('E:/MyCode/PycharmCode/HG-GNN/data_processor/dataset/lastfm/test.pkl','wb') as f:
                 pickle.dump(test_sess,f)
 
             # with open(os.path.join(self.data_path,self.dataset)+'/cate_dict.pkl','wb') as f:
@@ -420,7 +428,8 @@ class LastFM_Process(Data_Process):
         for u,ug in tqdm(df.groupby('userId')):
             #res.setdefault(u,[])
             res+=ug.groupby('sessionId')['itemId'].agg(list).tolist()
-        with open(os.path.join(self.data_path,self.dataset)+'/all_train_seq.txt','wb') as f:
+        with open('E:/MyCode/PycharmCode/HG-GNN/data_processor/dataset/lastfm/all_train_seq.txt','wb') as f:
+        # with open(os.path.join(self.data_path,self.dataset)+'/all_train_seq.txt','wb') as f:
             pickle.dump(res,f)
         return res
 
@@ -428,8 +437,14 @@ class LastFM_Process(Data_Process):
         print('split data...')
         splitter = self.conf['dataset.split']
         val_ratio = self.conf['dataset.val_ratio']
+
+        # change char to float
+        val_ratio = float(val_ratio)
+
         test_split= 0.2
-        df=pd.read_csv(os.path.join(self.data_path,self.dataset)+'/data.txt',header=None,names=['userId', 'timestamp', 'itemId','sessionId'])
+        # 改成绝对路径
+        df=pd.read_csv('E:/MyCode/PycharmCode/HG-GNN/data_processor/dataset/lastfm/data.txt',header=None,names=['userId', 'timestamp', 'itemId','sessionId'])
+        # df=pd.read_csv(os.path.join(self.data_path,self.dataset)+'/data.txt',header=None,names=['userId', 'timestamp', 'itemId','sessionId'])
         print(df['userId'].nunique())
         print(df['itemId'].nunique())
         print(df['itemId'].max(),df['itemId'].min())
@@ -457,8 +472,11 @@ class LastFM_Process(Data_Process):
         self._agg_all_seq(df_train)
 
 
+        print("df_train['userId'].min(),df_train['userId'].max()")
         print(df_train['userId'].min(),df_train['userId'].max())
+        print("df_train['itemId'].max(),df_train['itemId'].min()")
         print(df_train['itemId'].max(),df_train['itemId'].min())
+        print("df_test['itemId'].max(),df_test['itemId'].min()")
         print(df_test['itemId'].max(),df_test['itemId'].min())
 
         # split
@@ -466,22 +484,28 @@ class LastFM_Process(Data_Process):
         df_val= df_test.sample(frac=val_ratio)
         part_test=df_test[~df_test.index.isin(df_val.index)]
 
-        with open(os.path.join(self.data_path,self.dataset)+'/train.pkl','wb') as f:
+        print(os.path.join(self.data_path,self.dataset)+"************")
+        # with open(os.path.join(self.data_path,self.dataset)+'/train.pkl','wb') as f:
+        with open('E:/MyCode/PycharmCode/HG-GNN/data_processor/dataset/lastfm/train.pkl','wb') as f:
             pickle.dump(self._agg_df(df_train),f)
 
-        with open(os.path.join(self.data_path,self.dataset)+'/val.pkl','wb') as f:
+        # with open(os.path.join(self.data_path,self.dataset)+'/val.pkl','wb') as f:
+        with open('E:/MyCode/PycharmCode/HG-GNN/data_processor/dataset/lastfm/val.pkl','wb') as f:
             pickle.dump(self._agg_df(df_val),f)
 
-        with open(os.path.join(self.data_path,self.dataset)+'/test.pkl','wb') as f:
+        # with open(os.path.join(self.data_path,self.dataset)+'/test.pkl','wb') as f:
+        with open('E:/MyCode/PycharmCode/HG-GNN/data_processor/dataset/lastfm/test.pkl','wb') as f:
             pickle.dump(self._agg_df(part_test),f)
 
-        with open(os.path.join(self.data_path,self.dataset)+'/all_test.pkl','wb') as f:
+        # with open(os.path.join(self.data_path,self.dataset)+'/all_test.pkl','wb') as f:
+        with open('E:/MyCode/PycharmCode/HG-GNN/data_processor/dataset/lastfm/all_test.pkl','wb') as f:
             pickle.dump(self._agg_df(df_test),f)
 
     def _read_raw_data(self,topK=40000):
         data_home='./raw_data/lastfm-1K'
         saved_path='./dataset'
-        csv_file=data_home+'/userid-timestamp-artid-artname-traid-traname.tsv'
+        # csv_file=data_home+'/userid-timestamp-artid-artname-traid-traname.tsv'
+        csv_file='E:/MyCode/PycharmCode/HG-GNN/data_processor/raw_data/lastfm-1K/userid-timestamp-artid-artname-traid-traname.tsv'
         print(f'read raw data from {csv_file}')
         df = pd.read_csv(
             csv_file,
@@ -503,9 +527,16 @@ class LastFM_Process(Data_Process):
         df = self.truncate_long_sessions(df, is_sorted=True)
         df = self.keep_top_n_items(df, topK)
         df = self.filter_until_all_long_and_freq(df)
-        if not os.path.exists(f'{saved_path}/lastfm'):
-            os.mkdir(f'{saved_path}/lastfm')
-        df.to_csv(f'{saved_path}/lastfm/'+'data.txt',sep=',',header=None,index=False)
+        if not os.path.exists(f'E:/MyCode/PycharmCode/HG-GNN/data_processor/dataset/lastfm'):
+            os.mkdir(f'E:/MyCode/PycharmCode/HG-GNN/data_processor/dataset/lastfm')
+        df.to_csv(f'E:/MyCode/PycharmCode/HG-GNN/data_processor/dataset/lastfm/'+'data.txt',sep=',',header=None,index=False)
+
+
+       # if not os.path.exists(f'{saved_path}/lastfm'):
+       #      os.mkdir(f'{saved_path}/lastfm')
+       #  df.to_csv(f'{saved_path}/lastfm/'+'data.txt',sep=',',header=None,index=False)
+
+
         # df_train, df_test = train_test_split(df, test_split=0.2)
         # save_dataset(dataset_dir, df_train, df_test)
 
@@ -513,8 +544,10 @@ class LastFM_Process(Data_Process):
 
         data_home='./raw_data/lastfm-1K'
         saved_path='./dataset'
-        csv_file=data_home+'/userid-timestamp-artid-artname-traid-traname.tsv'
-        profile_file=data_home+'/userid-profile.tsv'
+        # csv_file=data_home+'/userid-timestamp-artid-artname-traid-traname.tsv'
+        csv_file='E:/MyCode/PycharmCode/HG-GNN/data_processor/raw_data/lastfm-1K/userid-timestamp-artid-artname-traid-traname.tsv'
+        # profile_file=data_home+'/userid-profile.tsv'
+        profile_file='E:/MyCode/PycharmCode/HG-GNN/data_processor/raw_data/lastfm-1K/userid-profile.tsv'
         print(f'read raw data from {csv_file}')
         df = pd.read_csv(
             csv_file,

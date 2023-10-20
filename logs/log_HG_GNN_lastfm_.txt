@@ -1,0 +1,142 @@
+2023-10-20 14:41:04,232 - __main__ - INFO - Iter:      0,  Train Loss: 7.50992,  Time: 0:00:19 *
+2023-10-20 14:41:17,178 - __main__ - INFO - 
+epoch runtime : 31.82s
+
+2023-10-20 14:41:36,555 - __main__ - INFO - epoch[0] test :Top-20 acc:24.335, mrr:12.1668, ndcg:14.8577, time: 19.4s 
+Top-10 acc:19.128, mrr:11.8086, ndcg:13.5451 
+Top-5 acc:15.450, mrr:11.3323, ndcg:12.3704 
+
+2023-10-20 14:42:08,602 - __main__ - INFO - 
+epoch runtime : 32.05s
+
+2023-10-20 14:42:28,102 - __main__ - INFO - epoch[1] test :Top-20 acc:28.297, mrr:13.5141, ndcg:16.7950, time: 19.5s 
+Top-10 acc:22.496, mrr:13.1209, ndcg:15.3402 
+Top-5 acc:17.855, mrr:12.5057, ndcg:13.8435 
+
+2023-10-20 14:42:59,761 - __main__ - INFO - 
+epoch runtime : 31.66s
+
+2023-10-20 14:43:19,277 - __main__ - INFO - epoch[2] test :Top-20 acc:29.881, mrr:13.7719, ndcg:17.3574, time: 19.5s 
+Top-10 acc:23.656, mrr:13.3327, ndcg:15.7746 
+Top-5 acc:18.478, mrr:12.6533, ndcg:14.1118 
+
+2023-10-20 14:44:04,440 - __main__ - INFO - 
+epoch runtime : 45.16s
+
+2023-10-20 14:44:26,465 - __main__ - INFO - epoch[3] test :Top-20 acc:30.532, mrr:13.8284, ndcg:17.5354, time: 22.0s 
+Top-10 acc:23.854, mrr:13.3649, ndcg:15.8472 
+Top-5 acc:18.817, mrr:12.7066, ndcg:14.2320 
+
+2023-10-20 14:45:05,243 - __main__ - INFO - 
+epoch runtime : 38.78s
+
+2023-10-20 14:45:25,915 - __main__ - INFO - epoch[4] test :Top-20 acc:30.504, mrr:13.7930, ndcg:17.5121, time: 20.7s 
+Top-10 acc:24.363, mrr:13.3701, ndcg:15.9633 
+Top-5 acc:18.987, mrr:12.6820, ndcg:14.2542 
+
+2023-10-20 14:45:58,035 - __main__ - INFO - 
+epoch runtime : 32.12s
+
+2023-10-20 14:46:17,559 - __main__ - INFO - epoch[5] test :Top-20 acc:30.702, mrr:13.7809, ndcg:17.5429, time: 19.5s 
+Top-10 acc:24.278, mrr:13.3413, ndcg:15.9263 
+Top-5 acc:18.959, mrr:12.6372, ndcg:14.2119 
+
+2023-10-20 14:46:49,321 - __main__ - INFO - 
+epoch runtime : 31.76s
+
+2023-10-20 14:47:08,806 - __main__ - INFO - epoch[6] test :Top-20 acc:30.758, mrr:13.7729, ndcg:17.5464, time: 19.5s 
+Top-10 acc:24.307, mrr:13.3340, ndcg:15.9261 
+Top-5 acc:18.930, mrr:12.6221, ndcg:14.1933 
+
+2023-10-20 14:47:40,849 - __main__ - INFO - 
+epoch runtime : 32.04s
+
+2023-10-20 14:48:00,273 - __main__ - INFO - epoch[7] test :Top-20 acc:30.872, mrr:13.7810, ndcg:17.5738, time: 19.4s 
+Top-10 acc:24.278, mrr:13.3338, ndcg:15.9198 
+Top-5 acc:18.874, mrr:12.6155, ndcg:14.1751 
+
+2023-10-20 14:48:32,440 - __main__ - INFO - 
+epoch runtime : 32.17s
+
+2023-10-20 14:48:54,337 - __main__ - INFO - epoch[8] test :Top-20 acc:30.843, mrr:13.7845, ndcg:17.5719, time: 21.9s 
+Top-10 acc:24.307, mrr:13.3412, ndcg:15.9321 
+Top-5 acc:19.015, mrr:12.6438, ndcg:14.2299 
+
+2023-10-20 14:49:26,551 - __main__ - INFO - 
+epoch runtime : 32.21s
+
+2023-10-20 14:49:46,053 - __main__ - INFO - epoch[9] test :Top-20 acc:30.872, mrr:13.7864, ndcg:17.5789, time: 19.5s 
+Top-10 acc:24.307, mrr:13.3415, ndcg:15.9325 
+Top-5 acc:19.015, mrr:12.6438, ndcg:14.2299 
+
+2023-10-20 14:50:17,627 - __main__ - INFO - 
+epoch runtime : 31.57s
+
+2023-10-20 14:50:37,068 - __main__ - INFO - epoch[10] test :Top-20 acc:30.872, mrr:13.7719, ndcg:17.5682, time: 19.4s 
+Top-10 acc:24.307, mrr:13.3271, ndcg:15.9218 
+Top-5 acc:18.987, mrr:12.6240, ndcg:14.2085 
+
+2023-10-20 14:51:10,338 - __main__ - INFO - 
+epoch runtime : 33.27s
+
+2023-10-20 14:51:45,544 - __main__ - INFO - epoch[11] test :Top-20 acc:30.872, mrr:13.7725, ndcg:17.5687, time: 35.2s 
+Top-10 acc:24.307, mrr:13.3276, ndcg:15.9223 
+Top-5 acc:18.987, mrr:12.6240, ndcg:14.2085 
+
+2023-10-20 14:52:23,580 - __main__ - INFO - 
+epoch runtime : 38.04s
+
+2023-10-20 14:52:45,780 - __main__ - INFO - epoch[12] test :Top-20 acc:30.872, mrr:13.7725, ndcg:17.5687, time: 22.2s 
+Top-10 acc:24.307, mrr:13.3276, ndcg:15.9223 
+Top-5 acc:18.987, mrr:12.6240, ndcg:14.2085 
+
+2023-10-20 14:53:23,395 - __main__ - INFO - 
+epoch runtime : 37.61s
+
+2023-10-20 14:53:43,220 - __main__ - INFO - epoch[13] test :Top-20 acc:30.872, mrr:13.7725, ndcg:17.5687, time: 19.8s 
+Top-10 acc:24.307, mrr:13.3276, ndcg:15.9223 
+Top-5 acc:18.987, mrr:12.6240, ndcg:14.2085 
+
+2023-10-20 14:54:15,632 - __main__ - INFO - 
+epoch runtime : 32.41s
+
+2023-10-20 14:54:36,256 - __main__ - INFO - epoch[14] test :Top-20 acc:30.872, mrr:13.7731, ndcg:17.5694, time: 20.6s 
+Top-10 acc:24.307, mrr:13.3283, ndcg:15.9230 
+Top-5 acc:18.987, mrr:12.6240, ndcg:14.2085 
+
+2023-10-20 14:55:12,112 - __main__ - INFO - 
+epoch runtime : 35.86s
+
+2023-10-20 14:55:32,690 - __main__ - INFO - epoch[15] test :Top-20 acc:30.872, mrr:13.7731, ndcg:17.5694, time: 20.6s 
+Top-10 acc:24.307, mrr:13.3283, ndcg:15.9230 
+Top-5 acc:18.987, mrr:12.6240, ndcg:14.2085 
+
+2023-10-20 14:56:09,145 - __main__ - INFO - 
+epoch runtime : 36.46s
+
+2023-10-20 14:56:31,287 - __main__ - INFO - epoch[16] test :Top-20 acc:30.872, mrr:13.7731, ndcg:17.5694, time: 22.1s 
+Top-10 acc:24.307, mrr:13.3283, ndcg:15.9230 
+Top-5 acc:18.987, mrr:12.6240, ndcg:14.2085 
+
+2023-10-20 14:57:03,385 - __main__ - INFO - Iter:   1000,  Train Loss: 4.8036,  Time: 0:16:18 *
+2023-10-20 14:57:05,779 - __main__ - INFO - 
+epoch runtime : 34.49s
+
+2023-10-20 14:57:26,692 - __main__ - INFO - epoch[17] test :Top-20 acc:30.872, mrr:13.7731, ndcg:17.5694, time: 20.9s 
+Top-10 acc:24.307, mrr:13.3283, ndcg:15.9230 
+Top-5 acc:18.987, mrr:12.6240, ndcg:14.2085 
+
+2023-10-20 14:58:03,918 - __main__ - INFO - 
+epoch runtime : 37.23s
+
+2023-10-20 14:58:27,733 - __main__ - INFO - epoch[18] test :Top-20 acc:30.872, mrr:13.7731, ndcg:17.5694, time: 23.8s 
+Top-10 acc:24.307, mrr:13.3283, ndcg:15.9230 
+Top-5 acc:18.987, mrr:12.6240, ndcg:14.2085 
+
+2023-10-20 14:59:00,292 - __main__ - INFO - 
+epoch runtime : 32.56s
+
+2023-10-20 14:59:23,008 - __main__ - INFO - epoch[19] test :Top-20 acc:30.872, mrr:13.7731, ndcg:17.5694, time: 22.7s 
+Top-10 acc:24.307, mrr:13.3283, ndcg:15.9230 
+Top-5 acc:18.987, mrr:12.6240, ndcg:14.2085 
+
