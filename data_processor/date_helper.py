@@ -745,8 +745,8 @@ class LastFM_Process(Data_Process):
         '''
             测试--取消过滤
         '''
-        # df = self.filter_until_all_long_and_freq(df)
-        # print(df.head(30))
+        df = self.filter_until_all_long_and_freq(df)
+        print(df.head(30))
 
         # 如果目录不存在，则创建一个用于存储处理后的数据集的目录
         if not os.path.exists(f'E:/MyCode/PycharmCode/HG-GNN/data_processor/dataset/lastfm'):
