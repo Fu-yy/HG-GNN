@@ -68,6 +68,7 @@ lp._split_data()
 
 # 加载训练数据、测试数据，以及最大的视频ID和用户ID
 train_data_ater, test_data, max_vid, max_uid = load_data(conf['dataset.name'], conf['dataset.path'])
+# train_seq.pkl
 
 # 打印当前数据集名称和相关统计信息
 print('当前数据集:', conf['dataset.name'])
@@ -110,22 +111,22 @@ def train(config, model, device, train_iter, test_iter=None):
 
             '''
             tensor([[ 6],
-        [ 6],
-            ...
-        [ 6],
-        [ 1],
-        [ 4],
-        [ 6],
-        [ 3]], dtype=torch.int32)
-tensor([[1322, 1335,   37,  ..., 1629, 1372,    0],
-        [ 176, 1335, 1541,  ..., 1330, 1347, 1467],
-        [ 356,  176,  364,  ...,  175,  419,    0],
-        ...,
-        [ 193,  976,  284,  ...,    0,    0,    0],
-        [1361,    0,    0,  ...,    0,    0,    0],
-        [ 879,  920,    0,  ...,    0,    0,    0]], dtype=torch.int32)
-tensor([[1, 1, 1,  ..., 1, 1, 0],
-        [1, 1, 1,  ..., 1, 1, 1],
+            [ 6],
+                ...
+            [ 6],
+            [ 1],
+            [ 4],
+            [ 6],
+            [ 3]], dtype=torch.int32)
+    tensor([[1322, 1335,   37,  ..., 1629, 1372,    0],
+            [ 176, 1335, 1541,  ..., 1330, 1347, 1467],
+            [ 356,  176,  364,  ...,  175,  419,    0],
+            ...,
+            [ 193,  976,  284,  ...,    0,    0,    0],
+            [1361,    0,    0,  ...,    0,    0,    0],
+            [ 879,  920,    0,  ...,    0,    0,    0]], dtype=torch.int32)
+    tensor([[1, 1, 1,  ..., 1, 1, 0],
+            [1, 1, 1,  ..., 1, 1, 1],
             '''
             print(uid)
             print(browsed_ids)
@@ -255,7 +256,7 @@ if __name__ == "__main__":
     # 对数据集进行采样
     sample_relations(conf['dataset.name'], conf['dataset.n_items'], sample_size=SZ)  # 根据指定的数据集名称和物品数量，采样样本大小为SZ
 
-    # 对图进行操作，获取图g和物品数量item_num
+    # 对图进行操作，获取图g和物品数量item_num  建图
     g, item_num = uui_graph(conf['dataset.name'], sample_size=SZ, topK=20, add_u=False, add_v=False)
     # 通过使用指定的数据集名称和采样大小SZ，从图中获取图g和物品数量item_num
     # topK表示保留每个节点的最高K个邻居节点，add_u和add_v表示是否添加边为(u, v)的逆边和(v, u)的逆边
@@ -326,7 +327,7 @@ if __name__ == "__main__":
     # 创建模型实例
     # g表示图数据，conf表示配置信息，item_num表示物品数量，SEQ_LEN表示序列长度
     # 将模型移动到设备(device)，使用GPU加速计算（如果可用）
-
+    print(model)
     train(conf, model, device, train_iter, test_iter)
     # 进行训练
     # conf表示配置信息，model表示模型，device表示设备，train_iter表示训练数据迭代器，test_iter表示测试数据迭代器

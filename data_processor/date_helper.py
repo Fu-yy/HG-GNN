@@ -557,7 +557,24 @@ class LastFM_Process(Data_Process):
     def _agg_all_seq(self, df):
         """
         对数据进行聚合操作，将每个用户的会话序列按照用户ID进行分组，并将每个会话中的物品ID序列聚合为列表形式。
+            将序列根据会话来分成不同列表，  而如何区分不同用户呢，则是通过前面求得的用户序列个数列表
+            输入：
+                userId  sessionId  itemId
+                0       1          1       4
+                1       1          1       7
+                2       1          2       2
+                3       2          3       5
+                4       2          3       1
+                5       2          4       3
 
+            输出：
+
+            [
+              [4, 7],        # 用户1的会话1的物品ID序列
+              [2],           # 用户1的会话2的物品ID序列
+              [5, 1],        # 用户2的会话3的物品ID序列
+              [3]            # 用户2的会话4的物品ID序列
+            ]
         参数：
         - df: DataFrame，包含用户ID（userId）、会话ID（sessionId）和物品ID（itemId）的数据框
 
@@ -596,39 +613,56 @@ class LastFM_Process(Data_Process):
 
         # 根据sessionId对数据进行分组，并获取每个组的最大时间戳
         endtime = df.groupby('sessionId', sort=False).timestamp.max()
-        endtime = endtime.sort_values()
+        endtime = endtime.sort_values() # 相当于将在同一session中的数据分组，计算出时间戳的范围，通过这个范围去控制
 
         # 计算测试集的数量
 
-        # 计算测试集的数量。endtime是一个包含会话结束时间的索引，len(endtime)表示总会话数。test_split是测试集的比例（0到1之间的浮点数），通过将总会话数与测试集比例相乘得到测试集的数量，使用int函数将结果转换为整数。
+        # 计算测试集的数量。endtime是一个包含会话结束时间的索引，len(endtime)表示当前时间戳范围内总会话数。test_split是测试集的比例（0到1之间的浮点数），通过将总会话数与测试集比例相乘得到测试集的数量，使用int函数将结果转换为整数。
         num_tests = int(len(endtime) * test_split)
         # 根据计算得到的测试集数量，获取最后num_tests个会话的索引。这些会话的索引将被用作测试集的标识。
         test_session_ids = endtime.index[-num_tests:]
+
+        print(test_session_ids)
 
         # 将数据分为训练集和测试集
 
         # 通过筛选出不包含在测试集中的会话，得到训练集的DataFrame。df.sessionId.isin(test_session_ids)用于判断每个会话的ID是否在测试集的索引中，~表示取反操作，即保留不在测试集索引中的会话。
         df_train = df[~df.sessionId.isin(test_session_ids)]
+        print(df_train)
         # 通过筛选出包含在测试集中的会话，得到测试集的DataFrame。df.sessionId.isin(test_session_ids)用于判断每个会话的ID是否在测试集的索引中，保留在测试集索引中的会话。reset_index(drop=True)用于重置测试集数据的索引，确保索引从0开始连续递增。
         df_test = df[df.sessionId.isin(test_session_ids)].reset_index(drop=True)
+        print(df_test)
 
         # 重新映射测试集中的itemId，只保留在训练集中出现过的项
-        df_test = df_test[df_test.itemId.isin(df_train.itemId.unique())]
-        df_test = self.filter_short_sessions(df_test)
+        # df_test = df_test[df_test.itemId.isin(df_train.itemId.unique())]
+        # df_test = self.filter_short_sessions(df_test)    # 取消筛选测试集
+        print(df_test)
+
+        # test集合是时间最新的一组，他们在一个session中
 
         # 重新映射训练集和测试集中的itemId，并将userId和itemId的值加1
         train_itemId_new, uniques = pd.factorize(df_train.itemId)
+
+        print(train_itemId_new)
+        print(uniques)
         df_train = df_train.assign(itemId=train_itemId_new)
+        print(df_train)
         oid2nid = {oid: i for i, oid in enumerate(uniques)}
         test_itemId_new = df_test.itemId.map(oid2nid)
         df_test = df_test.assign(itemId=test_itemId_new)
+        print(test_itemId_new)
         df_train['userId'] += 1
         df_train['itemId'] += 1
         df_test['userId'] += 1
         df_test['itemId'] += 1
 
+        print("df_train    df_test")
+        print(df_train)
+        print(df_test)
+
+
         # 对训练集进行聚合处理
-        self._agg_all_seq(df_train)
+        self._agg_all_seq(df_train)   # 存到dataset/lastfm/all_train_seq.txt
 
         # 打印训练集中userId的最小值和最大值，itemId的最大值和最小值，以及测试集中itemId的最大值和最小值
         print("df_train['userId'].min(),df_train['userId'].max()")
@@ -638,10 +672,17 @@ class LastFM_Process(Data_Process):
         print("df_test['itemId'].max(),df_test['itemId'].min()")
         print(df_test['itemId'].max(), df_test['itemId'].min())
 
+        print("聚合后")
+        print(df_train)
+        print(df_test)
         # 重置测试集的索引，并根据val_ratio从测试集中随机抽取一部分作为验证集
         df_test = df_test.reset_index(drop=True)
         df_val = df_test.sample(frac=val_ratio)
+
+        print(df_train)
+        print(df_test)
         part_test = df_test[~df_test.index.isin(df_val.index)]
+        print(part_test)
         print(os.path.join(self.data_path,self.dataset)+"************")
 
         # 将处理后的训练集、验证集、测试集以及完整的测试集保存为pickle文件
@@ -721,7 +762,7 @@ class LastFM_Process(Data_Process):
         df = df.sort_values(['userId', 'timestamp'])
         print("sort_values")
         print(df.head())
-        # 根据 'userId' 和 'timestamp' 列对会话进行分组  如是同一用户且相差小于8小时  同1组 interval控制
+        # 根据 'userId' 和 'timestamp' 列对会话进行分组  如是同一用户且相差小于8小时  同1组 interval控制  添加session列
         df = self._group_sessions(df)
         print(df.head(30))
 
@@ -745,8 +786,8 @@ class LastFM_Process(Data_Process):
         '''
             测试--取消过滤
         '''
-        df = self.filter_until_all_long_and_freq(df)
-        print(df.head(30))
+        # df = self.filter_until_all_long_and_freq(df)
+        # print(df.head(30))
 
         # 如果目录不存在，则创建一个用于存储处理后的数据集的目录
         if not os.path.exists(f'E:/MyCode/PycharmCode/HG-GNN/data_processor/dataset/lastfm'):
@@ -756,13 +797,7 @@ class LastFM_Process(Data_Process):
         df.to_csv(f'E:/MyCode/PycharmCode/HG-GNN/data_processor/dataset/lastfm/' + 'data.csv', sep=',', header=None,
                   index=False)
 
-       # if not os.path.exists(f'{saved_path}/lastfm'):
-       #      os.mkdir(f'{saved_path}/lastfm')
-       #  df.to_csv(f'{saved_path}/lastfm/'+'data.txt',sep=',',header=None,index=False)
 
-
-        # df_train, df_test = train_test_split(df, test_split=0.2)
-        # save_dataset(dataset_dir, df_train, df_test)
 
     def _get_user_profile(self):
         '''
@@ -812,6 +847,21 @@ class LastFM_Process(Data_Process):
         print('保存到 user_profile.csv 文件')
 
 if __name__=='__main__':
+
+
+
+    '''
+        主要读取文件，只读三列，然后 分组  各种处理， 最后生成训练数据集、    /dataset/lastfm/all_test.pkl
+                                                                /dataset/lastfm/test.pkl    
+                                                                /dataset/lastfm/val.pkl 
+                                                                /dataset/lastfm/train.pkl
+                                                                
+                                                                聚合后的 ：/lastfm/all_train_seq.txt
+                                                                
+    
+    '''
+
+
     conf={
         'config': 'basic.ini'
     }

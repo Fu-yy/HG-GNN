@@ -106,6 +106,7 @@ class HG_GNN(nn.Module):
         self.user_transform = nn.Sequential(
             # nn.ReLU(),
             nn.Linear(self.em_size, self.em_size, bias=True)
+
             # nn.BatchNorm1d(predict_em_size, momentum=0.5),
         )
 
@@ -200,7 +201,8 @@ class HG_GNN(nn.Module):
     def forward(self, user, seq, mask, seq_len, pos_idx):
         """
         前向传播方法。
-
+        从            outputs = model(uid.to(device), browsed_ids.to(device), mask.to(device), seq_len.to(device), pos_idx.to(device))  # 前向传播计算模型输出
+        传入
         参数:
             user: 用户索引，形状为 [batch_size, 1]。
             seq: 序列索引，形状为 [batch_size, length]。
@@ -219,6 +221,7 @@ class HG_GNN(nn.Module):
         pos_idx = pos_idx.long()
 
         h1 = self.conv1(self.G, self.emb_dropout(self.v2e(torch.arange(0, self.G.number_of_nodes()).long().to(device))))
+        #  conv1 = dglnn.SAGEConv(self.em_size, self.em_size, 'mean')
         h1 = F.relu(h1)
 
         bs = seq.size()[0]

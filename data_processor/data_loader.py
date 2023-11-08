@@ -84,7 +84,10 @@ def load_data(dataset, data_path):
         max_uid: 最大用户ID。
     """
     # 检查是否已存在序列化的数据文件
-    data_path = os.path.join(os.path.dirname(__file__),'dataset')
+
+    FILE_PATH = os.path.dirname(__file__)
+    FILE_PATH = FILE_PATH.replace('/', '\\')
+    data_path = os.path.join(FILE_PATH,'dataset')
     if not os.path.exists(os.path.join(data_path, dataset,'train_seq.pkl')):
         # 创建临时文件路径以保存数据
         print('try to build ', os.path.join(data_path, dataset,'train_seq.pkl') )
@@ -179,6 +182,8 @@ class SessionDataset(Dataset):
 
         参数:
             index: 样本索引。
+
+            在此处定义了uid, browsed_ids, mask, seq_len, label, pos_idx
 
         返回值:
             uid: 用户ID。
@@ -299,7 +304,7 @@ class SessionGraphDataset(Dataset):
 
 
 
-
+# 废
 def main():
     # Step 1: Load configuration from base.ini
     config = configparser.ConfigParser()
@@ -318,5 +323,5 @@ def main():
     # Step 4: Perform model training, evaluation, or inference
     # You can call your model training code here using train_dataset and test_dataset.
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
